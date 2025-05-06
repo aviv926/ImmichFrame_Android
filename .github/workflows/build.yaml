@@ -23,27 +23,13 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Decode Keystore and Set up Signing Environment
-      env:
-        RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
-      run: |
-        echo "Decoding Keystore..."
-        KEYSTORE_FILE_PATH="${{ runner.temp }}/release.jks" # Store in a temporary, job-specific directory
-        echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_FILE_PATH"
-        echo "Keystore decoded to $KEYSTORE_FILE_PATH"
+    - name: Build Unsigned APK with Gradle
+      run: ./gradlew assembleRelease # This will build an unsigned release APK
 
-        echo "Setting environment variables for Gradle signing..."
-        echo "RELEASE_STORE_FILE_PATH=$KEYSTORE_FILE_PATH" >> $GITHUB_ENV
-        echo "RELEASE_KEYSTORE_PASSWORD=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-        echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
-        echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
-        echo "Signing environment variables set."
-
-    - name: Build with Gradle
-      run: ./gradlew assembleRelease
-
-    - name: Upload APK
+    - name: Upload Unsigned APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-release-apk
-        path: app/build/outputs/apk/release/app-release.apk # Adjust path if your APK is in a different location
+        name: app-release-unsigned-apk
+        path: app/build/outputs/apk/release/app-release-unsigned.apk # Default path for unsigned release APK
+        # If your build produces app-release.apk even when unsigned, you can change the path back to:
+        # path: app/build/outputs/apk/release/app-release.apk
