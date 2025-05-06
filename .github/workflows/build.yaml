@@ -23,8 +23,24 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Decode Keystore and Set up Signing Environment
+      env:
+        RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+      run: |
+        echo "Decoding Keystore..."
+        KEYSTORE_FILE_PATH="${{ runner.temp }}/release.jks" # Store in a temporary, job-specific directory
+        echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_FILE_PATH"
+        echo "Keystore decoded to $KEYSTORE_FILE_PATH"
+
+        echo "Setting environment variables for Gradle signing..."
+        echo "RELEASE_STORE_FILE_PATH=$KEYSTORE_FILE_PATH" >> $GITHUB_ENV
+        echo "RELEASE_KEYSTORE_PASSWORD=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+        echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
+        echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
+        echo "Signing environment variables set."
+
     - name: Build with Gradle
-      run: ./gradlew assembleRelease # This task usually builds a universal release APK
+      run: ./gradlew assembleRelease
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
