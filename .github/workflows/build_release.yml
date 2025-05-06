@@ -18,20 +18,26 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        distribution: 'zulu' # Use Zulu as the JDK distribution
-        java-version: '17' # Android requires Java 17 in modern builds
+        distribution: 'zulu'
+        java-version: '17'
 
     - name: Set up Android SDK
       uses: android-actions/setup-android@v2
       with:
-        api-level: 33 # Change to the target SDK version of your app
+        api-level: 33
         build-tools: '33.0.0'
         ndk: false
 
-    - name: Grant Execute Permissions to Gradle Wrapper
-      run: chmod +x ./gradlew
+    - name: Decode Keystore
+      run: |
+        echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > keystore.jks
 
     - name: Build Universal APK
+      env:
+        KEYSTORE_FILE: keystore.jks
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       run: ./gradlew assembleRelease
 
     - name: Upload APK to Release
