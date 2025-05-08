@@ -15,6 +15,7 @@ import java.util.Locale
 class SettingsActivity : AppCompatActivity() {
     private lateinit var editTextUrl: EditText
     private lateinit var buttonSaveUrl: Button
+    private lateinit var chkUserCertificates: androidx.appcompat.widget.SwitchCompat
     private lateinit var chkUseWebView: androidx.appcompat.widget.SwitchCompat
     private lateinit var chkKeepScreenOn: androidx.appcompat.widget.SwitchCompat
     private lateinit var chkBlurredBackground: androidx.appcompat.widget.SwitchCompat
@@ -31,6 +32,7 @@ class SettingsActivity : AppCompatActivity() {
         editTextUrl = findViewById(R.id.editTextUrl)
         buttonSaveUrl = findViewById(R.id.buttonSaveUrl)
         chkUseWebView = findViewById(R.id.chkUseWebView)
+        chkUserCertificates = findViewById(R.id.chkUserCertificates)
         chkKeepScreenOn = findViewById(R.id.chkKeepScreenOn)
         chkBlurredBackground = findViewById(R.id.chkBlurredBackground)
         chkShowCurrentDate = findViewById(R.id.chkShowCurrentDate)
@@ -90,6 +92,7 @@ class SettingsActivity : AppCompatActivity() {
         editTextUrl.setText(sharedPreferences.getString("webview_url", "" ))
         editTextAuthSecret.setText(sharedPreferences.getString("authSecret", "") ?: "")
         chkUseWebView.isChecked = sharedPreferences.getBoolean("useWebView", true)
+        chkUserCertificates.isChecked = sharedPreferences.getBoolean("userCertificates", false)
         chkKeepScreenOn.isChecked = sharedPreferences.getBoolean("keepScreenOn", true)
         chkBlurredBackground.isChecked = sharedPreferences.getBoolean("blurredBackground", true)
         chkShowCurrentDate.isChecked = sharedPreferences.getBoolean("showCurrentDate", true)
@@ -112,6 +115,7 @@ class SettingsActivity : AppCompatActivity() {
         with(sharedPreferences.edit()) {
             putString("webview_url", url)
             putBoolean("useWebView", chkUseWebView.isChecked)
+            putBoolean("userCertificates", chkUserCertificates.isChecked)
             putBoolean("keepScreenOn", chkKeepScreenOn.isChecked)
             putBoolean("blurredBackground", chkBlurredBackground.isChecked)
             putBoolean("showCurrentDate", chkShowCurrentDate.isChecked)

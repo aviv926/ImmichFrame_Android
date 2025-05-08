@@ -388,6 +388,7 @@ class ScreenSaverService : DreamService() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadSettings() {
         val sharedPreferences = getSharedPreferences("ImmichFramePrefs", MODE_PRIVATE)
+        val useUserCertificates = sharedPreferences.getBoolean("userCertificates", false)
         blurredBackground = sharedPreferences.getBoolean("blurredBackground", true)
         showCurrentDate = sharedPreferences.getBoolean("showCurrentDate", true)
         var savedUrl = sharedPreferences.getString("webview_url", "") ?: ""

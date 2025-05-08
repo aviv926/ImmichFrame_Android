@@ -56,6 +56,13 @@
                 tools:ignore="HardcodedText" />
 
             <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/chkUserCertificates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enable user-installed certificates?"
+                tools:ignore="HardcodedText" />
+                
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/chkKeepScreenOn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
