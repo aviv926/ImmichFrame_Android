@@ -119,7 +119,7 @@ class SettingsActivity : AppCompatActivity() {
             putString("webview_url", url)
             putBoolean("useWebView", chkUseWebView.isChecked)
             putBoolean("userCertificates", chkUserCertificates.isChecked)
-            putBoolean("mediaPlaybackRequiresUserGesture", isChecked)
+            putBoolean("mediaPlaybackRequiresUserGesture", playbackToggle.isChecked)
             putBoolean("keepScreenOn", chkKeepScreenOn.isChecked)
             putBoolean("blurredBackground", chkBlurredBackground.isChecked)
             putBoolean("showCurrentDate", chkShowCurrentDate.isChecked)
