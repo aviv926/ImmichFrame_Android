@@ -551,6 +551,7 @@ class MainActivity : AppCompatActivity() {
             webView.settings.javaScriptEnabled = true
             webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
             webView.settings.domStorageEnabled = true
+            webView.settings.mediaPlaybackRequiresUserGesture = false
             webView.loadUrl(savedUrl)
         } else {
             retrofit = Helpers.createRetrofit(savedUrl, authSecret)
