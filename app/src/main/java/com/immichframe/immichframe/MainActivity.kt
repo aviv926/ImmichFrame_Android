@@ -476,8 +476,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadSettings() {
-        val mediaPlaybackRequiresUserGesture = sharedPreferences.getBoolean("mediaPlaybackRequiresUserGesture", true)
         val sharedPreferences = getSharedPreferences("ImmichFramePrefs", MODE_PRIVATE)
+        val mediaPlaybackRequiresUserGesture = sharedPreferences.getBoolean("mediaPlaybackRequiresUserGesture", true)
         val useUserCertificates = sharedPreferences.getBoolean("userCertificates", false)
         blurredBackground = sharedPreferences.getBoolean("blurredBackground", true)
         showCurrentDate = sharedPreferences.getBoolean("showCurrentDate", true)
