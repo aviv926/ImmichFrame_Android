@@ -66,7 +66,7 @@
                 android:id="@+id/playbackToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Allow Video Playback Without User Gesture"
+                android:text="Don't Allow Video Playback Without User Gesture"
                 android:layout_marginBottom="16dp" />
 
             
