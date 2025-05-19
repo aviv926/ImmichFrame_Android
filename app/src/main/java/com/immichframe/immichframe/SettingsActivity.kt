@@ -95,7 +95,7 @@ class SettingsActivity : AppCompatActivity() {
         editTextAuthSecret.setText(sharedPreferences.getString("authSecret", "") ?: "")
         chkUseWebView.isChecked = sharedPreferences.getBoolean("useWebView", true)
         chkUserCertificates.isChecked = sharedPreferences.getBoolean("userCertificates", false)
-        playbackToggle.isChecked = sharedPreferences.getBoolean("mediaPlaybackRequiresUserGesture", true)
+        playbackToggle.isChecked = sharedPreferences.getBoolean("mediaPlaybackRequiresUserGesture", false)
         chkKeepScreenOn.isChecked = sharedPreferences.getBoolean("keepScreenOn", true)
         chkBlurredBackground.isChecked = sharedPreferences.getBoolean("blurredBackground", true)
         chkShowCurrentDate.isChecked = sharedPreferences.getBoolean("showCurrentDate", true)
