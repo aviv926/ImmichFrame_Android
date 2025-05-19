@@ -16,6 +16,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var editTextUrl: EditText
     private lateinit var buttonSaveUrl: Button
     private lateinit var chkUserCertificates: androidx.appcompat.widget.SwitchCompat
+    private lateinit var playbackToggle: androidx.appcompat.widget.SwitchCompat
     private lateinit var chkUseWebView: androidx.appcompat.widget.SwitchCompat
     private lateinit var chkKeepScreenOn: androidx.appcompat.widget.SwitchCompat
     private lateinit var chkBlurredBackground: androidx.appcompat.widget.SwitchCompat
@@ -24,7 +25,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var buttonAndroidSettings: Button
     private lateinit var editTextAuthSecret: EditText
     private lateinit var editTextDimTimeRange: EditText
-
+ 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_view)
@@ -33,6 +34,7 @@ class SettingsActivity : AppCompatActivity() {
         buttonSaveUrl = findViewById(R.id.buttonSaveUrl)
         chkUseWebView = findViewById(R.id.chkUseWebView)
         chkUserCertificates = findViewById(R.id.chkUserCertificates)
+        playbackToggle = findViewById(R.id.playbackToggle)
         chkKeepScreenOn = findViewById(R.id.chkKeepScreenOn)
         chkBlurredBackground = findViewById(R.id.chkBlurredBackground)
         chkShowCurrentDate = findViewById(R.id.chkShowCurrentDate)
@@ -93,6 +95,7 @@ class SettingsActivity : AppCompatActivity() {
         editTextAuthSecret.setText(sharedPreferences.getString("authSecret", "") ?: "")
         chkUseWebView.isChecked = sharedPreferences.getBoolean("useWebView", true)
         chkUserCertificates.isChecked = sharedPreferences.getBoolean("userCertificates", false)
+        playbackToggle.isChecked = sharedPreferences.getBoolean("mediaPlaybackRequiresUserGesture", true)
         chkKeepScreenOn.isChecked = sharedPreferences.getBoolean("keepScreenOn", true)
         chkBlurredBackground.isChecked = sharedPreferences.getBoolean("blurredBackground", true)
         chkShowCurrentDate.isChecked = sharedPreferences.getBoolean("showCurrentDate", true)
@@ -116,6 +119,7 @@ class SettingsActivity : AppCompatActivity() {
             putString("webview_url", url)
             putBoolean("useWebView", chkUseWebView.isChecked)
             putBoolean("userCertificates", chkUserCertificates.isChecked)
+            putBoolean("mediaPlaybackRequiresUserGesture", isChecked)
             putBoolean("keepScreenOn", chkKeepScreenOn.isChecked)
             putBoolean("blurredBackground", chkBlurredBackground.isChecked)
             putBoolean("showCurrentDate", chkShowCurrentDate.isChecked)

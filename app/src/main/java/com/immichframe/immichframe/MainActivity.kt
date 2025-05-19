@@ -476,6 +476,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadSettings() {
+        val mediaPlaybackRequiresUserGesture = sharedPreferences.getBoolean("mediaPlaybackRequiresUserGesture", true)
         val sharedPreferences = getSharedPreferences("ImmichFramePrefs", MODE_PRIVATE)
         val useUserCertificates = sharedPreferences.getBoolean("userCertificates", false)
         blurredBackground = sharedPreferences.getBoolean("blurredBackground", true)
@@ -551,7 +552,7 @@ class MainActivity : AppCompatActivity() {
             webView.settings.javaScriptEnabled = true
             webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
             webView.settings.domStorageEnabled = true
-            webView.settings.mediaPlaybackRequiresUserGesture = false
+            webView.settings.mediaPlaybackRequiresUserGesture = mediaPlaybackRequiresUserGesture
             webView.loadUrl(savedUrl)
         } else {
             retrofit = Helpers.createRetrofit(savedUrl, authSecret)
