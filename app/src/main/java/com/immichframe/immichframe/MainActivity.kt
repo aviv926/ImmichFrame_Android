@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
     private var keepScreenOn = true
     private var blurredBackground = true
     private var showCurrentDate = true
+    private var allowMediaWithoutGesture = true
     private var currentWeather = ""
     private var isImageTimerRunning = false
     private val handler = Handler(Looper.getMainLooper())
@@ -490,6 +491,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadSettings() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val useUserCertificates = prefs.getBoolean("userCertificates", false)
+        allowMediaWithoutGesture = prefs.getBoolean("allowMediaPlaybackWithoutGesture", true)
         blurredBackground = prefs.getBoolean("blurredBackground", true)
         showCurrentDate = prefs.getBoolean("showCurrentDate", true)
         var savedUrl = prefs.getString("webview_url", "") ?: ""
@@ -579,7 +581,7 @@ class MainActivity : AppCompatActivity() {
             webView.settings.javaScriptEnabled = true
             webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
             webView.settings.domStorageEnabled = true
-            webView.settings.mediaPlaybackRequiresUserGesture = false
+            webView.settings.mediaPlaybackRequiresUserGesture = !allowMediaWithoutGesture
             webView.loadUrl(savedUrl)
         } else {
             retrofit = Helpers.createRetrofit(savedUrl, authSecret)

@@ -10,6 +10,10 @@
             android:defaultValue=""
             android:key="authSecret"
             android:title="Authorization Secret" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="userCertificates"
+            android:title="Use User Certificates?" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Display Options">
@@ -21,6 +25,10 @@
             android:defaultValue="true"
             android:key="keepScreenOn"
             android:title="Keep Screen On?" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="allowMediaPlaybackWithoutGesture"
+            android:title="Allow media playback without user gesture?" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="blurredBackground"
