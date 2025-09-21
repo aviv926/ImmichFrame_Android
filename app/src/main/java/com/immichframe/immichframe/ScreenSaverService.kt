@@ -17,6 +17,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -26,6 +27,7 @@ import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,20 +68,36 @@ class ScreenSaverService : DreamService() {
             }
         }
     }
+    private val weatherRunnable = object : Runnable {
+        override fun run() {
+            if (isWeatherTimerRunning) {
+                handler.postDelayed(this, 600000)
+                getWeather()
+            }
+        }
+    }
     private var isShowingFirst = true
     private var zoomAnimator: ObjectAnimator? = null
 
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onDreamingStarted() {
-        super.onAttachedToWindow()
+        super.onDreamingStarted()
         isFullscreen = true
-        isInteractive = false
+        isInteractive = true
         setContentView(R.layout.screen_saver_view)
         webView = findViewById(R.id.webView)
         webView.setBackgroundColor(Color.BLACK)
+        webView.loadUrl("about:blank")
         imageView1 = findViewById(R.id.imageView1)
         imageView2 = findViewById(R.id.imageView2)
         txtPhotoInfo = findViewById(R.id.txtPhotoInfo)
         txtDateTime = findViewById(R.id.txtDateTime)
+
+        webView.setOnTouchListener { _, _ ->
+            finish()
+            true
+        }
 
         acquireWakeLock()
         loadSettings()
@@ -90,6 +108,55 @@ class ScreenSaverService : DreamService() {
         stopImageTimer()
         releaseWakeLock()
         handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_LEFT -> {
+                    previousAction()
+                    return true
+                }
+                KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                    nextAction()
+                    return true
+                }
+                else -> {
+                    finish()
+                    return true
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
+    private fun previousAction() {
+        if (useWebView) {
+            // Simulate a key press
+            webView.requestFocus()
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT)
+            webView.dispatchKeyEvent(event)
+        } else {
+            val safePreviousImage = previousImage
+            if (safePreviousImage != null) {
+                stopImageTimer()
+                showImage(safePreviousImage)
+                startImageTimer()
+            }
+        }
+    }
+
+    private fun nextAction() {
+        if (useWebView) {
+            // Simulate a key press
+            webView.requestFocus()
+            val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT)
+            webView.dispatchKeyEvent(event)
+        } else {
+            stopImageTimer()
+            getNextImage()
+            startImageTimer()
+        }
     }
 
     private fun showImage(imageResponse: Helpers.ImageResponse) {
@@ -387,13 +454,13 @@ class ScreenSaverService : DreamService() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadSettings() {
-        val sharedPreferences = getSharedPreferences("ImmichFramePrefs", MODE_PRIVATE)
-        val useUserCertificates = sharedPreferences.getBoolean("userCertificates", false)
-        blurredBackground = sharedPreferences.getBoolean("blurredBackground", true)
-        showCurrentDate = sharedPreferences.getBoolean("showCurrentDate", true)
-        var savedUrl = sharedPreferences.getString("webview_url", "") ?: ""
-        useWebView = sharedPreferences.getBoolean("useWebView", true)
-        val authSecret = sharedPreferences.getString("authSecret", "") ?: ""
+        val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val useUserCertificates = prefs.getBoolean("userCertificates", false)
+        blurredBackground = prefs.getBoolean("blurredBackground", true)
+        showCurrentDate = prefs.getBoolean("showCurrentDate", true)
+        var savedUrl = prefs.getString("webview_url", "") ?: ""
+        useWebView = prefs.getBoolean("useWebView", true)
+        val authSecret = prefs.getString("authSecret", "") ?: ""
 
         webView.visibility = if (useWebView) View.VISIBLE else View.GONE
         imageView1.visibility = if (useWebView) View.GONE else View.VISIBLE
@@ -411,8 +478,8 @@ class ScreenSaverService : DreamService() {
             } else {
                 savedUrl
             }
-
-            handler.removeCallbacksAndMessages(null)
+            handler.removeCallbacks(imageRunnable)
+            handler.removeCallbacks(weatherRunnable)
             webView.webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
                     view: WebView?,
@@ -434,7 +501,19 @@ class ScreenSaverService : DreamService() {
                     error: WebResourceError?
                 ) {
                     super.onReceivedError(view, request, error)
-                    view?.reload()
+
+                    if (request?.isForMainFrame == true && error != null) {
+                        view?.loadUrl("file:///android_asset/error_page.html")
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            val errorCode = error.errorCode
+                            val errorDescription = error.description.toString().replace("'", "\\'")
+                            view?.evaluateJavascript("showError('$errorCode', '$errorDescription')", null)
+                        }, 500)
+                    }
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        webView.loadUrl(savedUrl)
+                    }, 5000)
                 }
             }
             webView.settings.javaScriptEnabled = true

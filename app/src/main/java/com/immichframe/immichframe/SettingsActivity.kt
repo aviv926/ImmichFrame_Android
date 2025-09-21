@@ -164,4 +164,5 @@ class SettingsActivity : AppCompatActivity() {
                 .show()
         }
     }
+    
 }

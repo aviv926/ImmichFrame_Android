@@ -13,7 +13,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 object Helpers {
     fun textSizeMultiplier(context: Context, currentSizeSp: Float, multiplier: Float): Float {
         val resources = context.resources
@@ -80,10 +79,7 @@ object Helpers {
         paint.color = lineColor
         canvas.drawRect(
             leftImage.width.toFloat(), // Line starts after left image
-            0f,
-            (leftImage.width + lineWidth).toFloat(),
-            targetHeight.toFloat(),
-            paint
+            0f, (leftImage.width + lineWidth).toFloat(), targetHeight.toFloat(), paint
         )
 
         canvas.drawBitmap(rightImage, (leftImage.width + lineWidth).toFloat(), 0f, paint)
@@ -167,30 +163,25 @@ object Helpers {
         @GET("api/Weather")
         fun getWeather(): Call<Weather>
     }
+
     fun createRetrofit(baseUrl: String, authSecret: String): Retrofit {
         val normalizedBaseUrl = if (!baseUrl.endsWith("/")) "$baseUrl/" else baseUrl
 
-        val client = OkHttpClient.Builder()
-            .addInterceptor { chain ->
+        val client = OkHttpClient.Builder().addInterceptor { chain ->
                 val originalRequest = chain.request()
 
                 val request = if (authSecret.isNotEmpty()) {
-                    originalRequest.newBuilder()
-                        .addHeader("Authorization", "Bearer $authSecret")
+                    originalRequest.newBuilder().addHeader("Authorization", "Bearer $authSecret")
                         .build()
                 } else {
                     originalRequest
                 }
 
                 chain.proceed(request)
-            }
-            .build()
+            }.build()
 
-        return Retrofit.Builder()
-            .baseUrl(normalizedBaseUrl)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        return Retrofit.Builder().baseUrl(normalizedBaseUrl).client(client)
+            .addConverterFactory(GsonConverterFactory.create()).build()
     }
 
 }
